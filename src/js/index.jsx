@@ -1,18 +1,30 @@
-
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { ipcRenderer } from 'electron';
+import Panel from './Panel.jsx';
 
 
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { message: 'test' };
+    this.state = { screens: '' };
+
+    console.log(ipcRenderer.sendSync('synchronous-message', 'ping')); // prints "pong"
+
+    ipcRenderer.on('asynchronous-reply', (event, arg) => {
+      console.log(arg); // prints "pong"
+    });
+
+    ipcRenderer.send('asynchronous-message', 'ping');
   }
 
   render() {
     return (
       <div>
-        {this.state.message}
+        <div>
+          {this.screens}
+        </div>
+        <Panel panelNo="2" />
       </div>
     );
   }
