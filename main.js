@@ -4,6 +4,8 @@ const app = electron.app
 
 const windowManager = require('electron-window-manager');
 
+//
+
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow
 
@@ -40,7 +42,22 @@ function createWindow () {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+// app.on('ready', createWindow)
+
+app.on('ready', function () {
+  windowManager.init();
+  // Open a window
+  //windowManager.createNew('home', 'title', '/dist/index.html');
+  windowManager.open(
+    false, 
+    false, 
+    url.format({
+      pathname: path.join(__dirname, '/dist/index.html'),
+      protocol: 'file:',
+      slashes: true
+    })
+  );
+});
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
