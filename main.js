@@ -1,10 +1,12 @@
 const electron = require('electron')
+const {ipcRenderer} = require('electron')
 // Module to control application life.
 const app = electron.app
 
-const windowManager = require('electron-window-manager');
-
+// load in some random data to use
+const data = require('./random-data.json');
 //
+
 
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow
@@ -14,7 +16,11 @@ const url = require('url')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow
+let mainWindow = null;
+
+
+//
+global.sharedObject = {total : 28};
 
 function createWindow () {
   // Create the browser window.
@@ -37,27 +43,17 @@ function createWindow () {
     // when you should delete the corresponding element.
     mainWindow = null
   })
+
+  mainWindow.webContents.on('did-finish-load', () => {
+    mainWindow.webContents.send('ping', data);
+  });
 }
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-// app.on('ready', createWindow)
+app.on('ready', createWindow)
 
-app.on('ready', function () {
-  windowManager.init();
-  // Open a window
-  //windowManager.createNew('home', 'title', '/dist/index.html');
-  windowManager.open(
-    false, 
-    false, 
-    url.format({
-      pathname: path.join(__dirname, '/dist/index.html'),
-      protocol: 'file:',
-      slashes: true
-    })
-  );
-});
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
@@ -67,6 +63,7 @@ app.on('window-all-closed', function () {
     app.quit()
   }
 })
+
 
 app.on('activate', function () {
   // On OS X it's common to re-create a window in the app when the
@@ -81,12 +78,9 @@ app.on('activate', function () {
 
 // In main process.
 const {ipcMain} = require('electron')
-ipcMain.on('asynchronous-message', (event, arg) => {
-  console.log(arg)  // prints "ping"
-  event.sender.send('asynchronous-reply', 'pong')
-})
 
-ipcMain.on('synchronous-message', (event, arg) => {
-  console.log(arg)  // prints "ping"
-  event.returnValue = 'pong'
-})
+//
+
+
+
+

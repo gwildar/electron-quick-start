@@ -9,13 +9,9 @@ class App extends React.Component {
     super(props);
     this.state = { screens: '' };
 
-    console.log(ipcRenderer.sendSync('synchronous-message', 'ping')); // prints "pong"
-
-    ipcRenderer.on('asynchronous-reply', (event, arg) => {
+    ipcRenderer.on('ping', (event, arg) => {
       console.log(arg); // prints "pong"
     });
-
-    ipcRenderer.send('asynchronous-message', 'ping');
   }
 
   render() {
